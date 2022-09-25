@@ -94,12 +94,17 @@ def printGraph(graph):
 
 
 graph = dict()
-with open('input.txt','r') as f:
+with open('inputsahruj.txt','r') as f:
     data = f.read().splitlines()
 
 for row in data:
     row = row.split(',')
-    depends,row = [int(val) for val in row[-1].split(';')],row[:-1]
+    
+    if row[3]=="":
+        depends,row = [-1],row[:-1]
+    else:
+        depends,row = [int(val) for val in row[-1].split(';')],row[:-1]
+
     modified = [int(row[0]),row[1],int(row[2])]
     
     # print(modified,depends)
