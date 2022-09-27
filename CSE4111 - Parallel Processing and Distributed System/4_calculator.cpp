@@ -3,9 +3,13 @@
 using namespace std;
 
 int main(int argc, char **argv){
-    int a=4,b=3;
-    // scanf("%d %d",&a,&b);
+    // for(int i=0;i<argc;i++)cout<<argv[i]<<endl;
+    int a,b;
+    a = stoi(argv[1]);
+    b = stoi(argv[2]);
     MPI_Init(NULL,NULL);
+    
+    // scanf("%d %d",&a,&b);
 
     int rank,all_process;
     MPI_Comm_size(MPI_COMM_WORLD,&all_process);

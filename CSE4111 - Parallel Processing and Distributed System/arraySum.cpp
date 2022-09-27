@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 		//MPI_Recv(&numbertoreceive, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		printf("Given 12 random values:\n");
 		int values[20] = { 1,2,3,4,5,6,7,8,9,10,11,12 };
-
+		for(int i=0;i<N;i++)cin>>values[i];
 		MPI_Send(values, section, MPI_INT, 2, 10, MPI_COMM_WORLD);
 		MPI_Send(values + section, section, MPI_INT, 3, 10, MPI_COMM_WORLD);
 		MPI_Send(values + 2 * section, section, MPI_INT, 4, 10, MPI_COMM_WORLD);
@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 
 		//Now lets recieve them
 		int total = 0;
-		for (int i = 0;i < 4;i++) {
+		for (int i = 0;i < N/section;i++) {
 			int value;
 			MPI_Recv(&value, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 			total += value;
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 	else {
 		MPI_Recv(&subArray, section, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		int sum = 0;
-		for (int i = 0;i < 3;i++) {
+		for (int i = 0;i < section;i++) {
 			sum += subArray[i];
 		}
 		printf("from %d rank: %d is sum\n", my_rank, sum);
