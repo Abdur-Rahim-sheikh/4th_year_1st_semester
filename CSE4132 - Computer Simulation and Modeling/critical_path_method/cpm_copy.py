@@ -1,4 +1,4 @@
-class Capsule(object):
+class Capsule:
     def __init__(self,data,pred):
         # default data pass share variable somehow
         self.activity = data[0]
@@ -16,8 +16,6 @@ class Capsule(object):
         f"{self.ls} | {self.duration} | {self.lf}\n"+\
         f"{self.predecessor}\n{self.successor}\n"
         
-    # def suc_left(self): return len(self.successor)
-    # def pred_left(self): return len(self.predecessor)
 
 # -1 value will be start node and -2 to end node as dummy node to bind them
    
@@ -47,14 +45,16 @@ def forward_pass(graph):
     count = dict()
     for id in graph:
         count[id] = len(graph[id].predecessor)
+
+
     while queue:
         val = queue.pop()
         for to in graph[val].successor:
-            graph[to].es = max(graph[to].es,graph[val].es+graph[val].duration)
+            graph[to].es = max(graph[to].es,graph[val].ef)
             graph[to].ef = graph[to].es + graph[to].duration
             # print(val,to,graph[to].predecessor)
             count[to] -= 1
-            if not count[to]:
+            if count[to]==0:
                 queue.append(to)
                 
 
@@ -66,6 +66,7 @@ def backward_pass(graph):
     count = dict()
     for id in graph:
         count[id] = len(graph[id].successor)
+        # print(id,"successor",count[id])
     while queue:
         val = queue.pop()
         
@@ -74,7 +75,7 @@ def backward_pass(graph):
             graph[to].ls = graph[to].lf - graph[to].duration
             # print(val,to,graph[to].predecessor)
             count[to] -= 1
-            if not count[to]:
+            if count[to]==0:
                 queue.append(to)
 
 
@@ -83,9 +84,10 @@ def getCriticalPath(graph):
     path = []
     while val!=HEAD:
         path.append(graph[val].name)
-        val = [x for x in graph[val].successor if graph[x].lf==graph[x].ef]
-        val = val[0]
-
+        # val = [x for x in graph[val].successor if graph[x].lf==graph[x].ef]
+        for x in graph[val].successor:
+            if graph[x].lf == graph[x].ef:
+                val = x
     return path[1:]
 
 def printGraph(graph):
@@ -101,18 +103,22 @@ for row in data:
     row = row.split(',')
     
     if row[3]=="":
-        depends,row = [-1],row[:-1]
+        depends = []
+        row = row[:-1]
     else:
-        depends,row = [int(val) for val in row[-1].split(';')],row[:-1]
+        # depends= [[int(val) for val in row[-1].split(';')]]
+        depends = []
+        pred = row[-1].split(';')
+        for i in pred:
+            depends.append(int(i))
+        row = row[:-1]
 
     modified = [int(row[0]),row[1],int(row[2])]
     
     # print(modified,depends)
-    if depends==[-1]:
-        graph[modified[0]] = Capsule(modified,[])
-    else:
-        graph[modified[0]] = Capsule(modified,depends)
-    print(graph[modified[0]])
+    
+    graph[modified[0]] = Capsule(modified,depends)
+    
 
 # now load the successor
 for id,element in graph.items():
@@ -130,7 +136,7 @@ if __name__ == "__main__":
     
     backward_pass(graph)
     # printGraph(graph)
-    
+    printGraph(graph)
     path = getCriticalPath(graph)
     print(path)
 
