@@ -95,7 +95,7 @@ vv(int) BFS(int start,int icv,int columns){
     }
     return network;
 }
-string bin(int n,int k){
+string bin(int k,int n){
     string s;
     for(int i=n-1;i>=0;i--){
         s+=((k & (1<<i))>0)+'0';
@@ -103,15 +103,24 @@ string bin(int n,int k){
 
     return s;
 }
+v(int) getPermissible(int val,int n){
+    v(int) ans;
+    for(int i=0;i<n;i++){
+        if(check(val,i)==0)ans.push_back(i+1);
+    }
+    return ans;
+}
 void BFSPrint(vv(int)&network,int start,int n){
     int i=0;
-    cout<<bin(n,2)<<endl;
+    // cout<<bin(n,2)<<endl;
     for(auto u: network){
         i++;
         if(u.empty())continue;
-        bin(n,i-1);
-        for(auto v:u){
-            cout<<bin(n,v)<<' ';
+        v(int) permissible = getPermissible(i-1,n);
+        cout<<bin(i-1,n)<<" : ";
+        for(int i=0;i<u.size();i++){
+            // printf("(%s %s), ",bin(permissible[i],n),bin(u[i],n));
+            cout<<"("<<permissible[i]<<" "<<bin(u[i],n)<<"), ";
         }
         cout<<endl;
     }
@@ -178,7 +187,7 @@ int main(){
             icv |= (1<<p);
         }
     }
-    cout<<icv<<endl;
+    // cout<<icv<<endl;
     
     vv(int) diagram = BFS(icv,icv,n);
     BFSPrint(diagram,icv,n);
